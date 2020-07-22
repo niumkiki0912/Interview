@@ -3,7 +3,9 @@
 
 #### 2. webpack与gulp的不同
 
--------------------------
+---
+<br/>
+
 #### 3. 有哪些常见的Loader？他们是解决什么问题的？
 + 文件：
     + file-loader
@@ -23,7 +25,9 @@
 + 框架
     + vue-loader: 加载和转移vue组件
 
----------------------   
+--- 
+<br/>
+
 #### 4. 有哪些常见的Plugin？他们是解决什么问题的？
 + htmlWebpackPlugin: 自动生成html文件，并且将js文件自动引入
 
@@ -47,14 +51,77 @@
     + 在webpack主配置文件中设置，通过引用 dll 的 manifest 文件来把依赖的名称映射到模块的 id 上
 
 + HardSourceWebpackPlugin：硬件缓存
-----------------------
+
+---
+<br/>
 
 #### 5. Loader和Plugin的不同？
++ 作用不同
+    + loader: 加载器，webpack本身只能解析js文件，如果想要解析和打包其它文件的话，就需要用到loader了，所以其作用是让webpack能够加载和解析非js文件
+    + plugin: 插件，可以扩展webpack的功能，用于执行范围更广的任务，让webpack更加灵活
++ 用法不同
+    + loader: 在module.rules中配置
+    ```javascript
+        module: {
+            rules: [
+                {
+                    test: /\.css$/,
+                    use: ['style-loader', 'css-loader']
+                }
+            ]
+        }
+    ```
+    + plugin: 在plugin中直接配置
+    ```javascript
+        plugin: [
+            new HtmlWebpackPlugin()
+        ]
+    ```
+
+---
+<br/>
+
 #### 6. webpack的构建流程是什么?从读取配置到输出文件这个过程尽量说全
+
 #### 7. 是否写过Loader和Plugin？描述一下编写loader或plugin的思路？
+
 #### 8. webpack的热更新是如何做到的？说明其原理？
+
 #### 9. 如何利用webpack来优化前端性能？（提高性能和体验）
+
 #### 10. 如何提高webpack的构建速度？
++ 使用DllPlugin和DllReferencePlugin来拆分bundles：
+
+    > 项目中引入了很多第三方类库，这个库很长时间不会有变更，打包的时候分开打包能够提升打包速度；而dllPlugin(动态链接库插件),原理就是把网页依赖的基础模块抽离出来打包到dll文件中，当需要导入的模块存在于dll中时，这个模块不再被打包，而是去dlll中获取
+    + dllPlugin: 用于打包出一个单独的动态链接库文件
+    + DllReferencePlugin：用于在主配置的文件中引入dllPlugin打包好的动态链接库文件， 通过引用 dll 的 manifest 文件来把依赖的名称映射到模块的 id 上
+
++ HardSourceWebpackPlugin
+    + 硬件缓存：提供中间缓存的作用，首次构建时没有太大的变化，第二次构建时间就会有较大节省
+
++ happyPack
+    + 多线程预编译：能够将任务分解给多个子进程去并发执行，子进程处理完后再将结果发送给主进程
+
++ tree-shaking
+    + 摇树，打包时剔除调多余代码，进而提升构建速度
+
++ 多入口情况下，使用CommonsChunkPlugin来提取公共代码 ?
++ 通过externals配置来提取常用库 ?
++ 使用webpack-uglify-parallel来提升uglifyPlugin的压缩速度。 原理上webpack-uglify-parallel采用了多核并行压缩来提升压缩速度? 
+---
+<br/>
+
 #### 11. 怎么配置单页应用？怎么配置多页应用？
+---
+<br/>
+
 #### 12. npm打包时需要注意哪些？如何利用webpack来更好的构建？
+---
+<br/>
+
 #### 13. 如何在vue项目中实现按需加载？
+---
+<br/>
+
+
+https://zhuanlan.zhihu.com/p/44438844
