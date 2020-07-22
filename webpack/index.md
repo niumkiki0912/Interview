@@ -82,12 +82,79 @@
 <br/>
 
 #### 6. webpack的构建流程是什么?从读取配置到输出文件这个过程尽量说全
+---
+<br/>
 
 #### 7. 是否写过Loader和Plugin？描述一下编写loader或plugin的思路？
+---
+<br/>
 
 #### 8. webpack的热更新是如何做到的？说明其原理？
+---
+<br/>
 
 #### 9. 如何利用webpack来优化前端性能？（提高性能和体验）
++ 对图片进行压缩
+    + url-loader: 可以设置limit大小来对图片进行处理，对小于limit 的图片转化为base64格式
+    + 对于较大的图片，可以用image-webpack-loader来压缩图片
+    ```javascript
+        {
+            test: /\.(png|jpg|jpe?g|gif)$/,
+            use: [
+                {
+                    loader: 'url-loader', 
+                    options: {
+                        name: '[name]_[hash:6].[ext]', 
+                        outputPath: 'images',
+                        limit: 1024 * 12 //单位是字节
+                    }
+                },
+                {
+                    loader: 'image-webpack-loader', 
+                    options: {
+                        bypassOnDebug: true
+                    }
+                },
+            ]
+        }
+    ```
+
++ 生产环境压缩代码
+    + optimizeCssAssetsPlugin：使用cssnano压缩css代码
+    + HtmlWebpackPlugin插件中的minify选项: 压缩html代码
+    
++ tree-shaking
+    + 删除没有用到的死代码
+
++ 利用cdn加速
+    + 在构建过程中，将引用的静态资源路径修改为cdn上对应的路径，可以利用webpack outPut中的publicPath去修改资源路径
+
++ 减少es6转es5冗余代码
+    + Babel插件会在将ES6转换为ES5时注入一些辅助代码，例如：
+    `class HelloWebpack extends Component{...}`
+
+    + 这段代码再被转换成正常运行的es5代码时，需要一下两个辅助函数
+    ```javascript
+        babel-runtime/helpers/createClass // 用于实现class语法
+        babel-runtime/helpers/inherits // 用于实现extends语法
+    ```
+
+    + 默认情况下，Bable会在每个输出文件中内嵌这些依赖的辅助函数代码，如果多个源文件都依赖这些辅助函数，那么就会出现很多次，造成代码冗余
+
+    + 为了解决这个问题，使用`babel-plugin-transform-runtime`，将相关辅助函数替换成导入语句，从而减小babel编译出来的代码的文件大小
+
+    ```javascript
+        // 在.babelrc配置文件中添加
+        plugin: [
+            "transform-runtime"
+        ]
+    ```
+
++ 提取公共代码
+    + commonChunkPlugin(webpack v4 移除): `new webpack.optimize.CommonsChunkPlugin(options)`
+    + SplitChunksPlugin(webpack v4 替代上者): https://juejin.im/post/5b99b9cd6fb9a05cff32007a
+---
+<br/>
 
 #### 10. 如何提高webpack的构建速度？
 + 使用DllPlugin和DllReferencePlugin来拆分bundles：
