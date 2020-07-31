@@ -82,10 +82,22 @@
 <br/>
 
 #### 6. webpack的构建流程是什么?从读取配置到输出文件这个过程尽量说全
++ 在webpack.js文件中，生成一个Webpack的类，new 一个Webpack对象
++ 从webpack.config.js中读取配置项，传入Webpack中
++ 确定入口：根据配置项中的entry找出入口文件
++ 开始编译：执行对象的run方法开始编译，调用`parse(this.entry)`,并且递归parse直到所有入口依赖的文件都经过了parse处理，保存返回的数据，然后调用file方法
++ 编译模块：parse方法
+    + 从入口文件出发，使用fs读取文件内容，使用bable/parser中的parse方法，将内容转化为AST抽象语法树。
+    + 然后使用bable/traverse方法，处理文件依赖，保存'引用文件：引用文件地址'到dependencies中
+    + 使用babel/core中的 transformFromAst 处理代码，并将code,dependencies还有文件地址作为对象一起返回
++ 创建自运行函数
+调用所有的Loader对模块进行编译，再找出该模块
+
 ---
 <br/>
 
 #### 7. 是否写过Loader和Plugin？描述一下编写loader或plugin的思路？
+
 ---
 <br/>
 
